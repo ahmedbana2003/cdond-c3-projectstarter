@@ -1,6 +1,6 @@
-Endpoint (Hostname): circleci-dp.chhcfvcd8zu0.us-west-2.rds.amazonaws.com 
+Endpoint (Hostname): circleci-dp.cu5bs7tla2pb.us-east-1.rds.amazonaws.com 
 Instance identifier: circleci-dp
-Database name: postgres (default)
+Database name: circleci
 Username: postgres
 Password: mypassword
 Port: 5432
