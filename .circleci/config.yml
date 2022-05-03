@@ -27,7 +27,7 @@ commands:
     parameters:
       workflow_id:
         type: string
-        default: ${circle_workflow_id:0:7}
+        default: ${CIRCLE_WORKFLOW_ID:0:7}
          
     steps:
       - run:
@@ -168,21 +168,21 @@ jobs:
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --tags project="UdaPeople-backend" \
-              --stack-name "UdaPeople-backend-${circle_workflow_id:0:7}" \
-              --parameter-overrides ID="${circle_workflow_id:0:7}"   
+              --stack-name "UdaPeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"   
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
               --tags project="UdaPeople-frontend" \
-              --stack-name "UdaPeople-frontend-${circle_workflow_id:0:7}" \
-              --parameter-overrides ID="${circle_workflow_id:0:7}" 
+              --stack-name "UdaPeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
       - run:
           name: Add back-end ip to ansible inventory
           command: |
             BACKEND_AWS_PUBLIC_IP=$(aws ec2 describe-instances \
-              --filters "Name=tag:Name,Values=backend-${circle_workflow_id:0:7}" \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             echo $BACKEND_AWS_PUBLIC_IP >> .circleci/ansible/inventory.txt   
@@ -193,7 +193,7 @@ jobs:
             - project/.circleci/ansible/inventory.txt
 
       - destroy-environment:
-            workflow_id: ${circle_workflow_id:0:7}
+            workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
 
 #       # Here's where you will add some code to rollback on failure      
