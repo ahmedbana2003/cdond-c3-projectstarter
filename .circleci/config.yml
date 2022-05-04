@@ -23,7 +23,10 @@ commands:
             sudo apt install ansible -y
 
   destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given stacks name.     
+    description: Destroy back-end and front-end cloudformation stacks given stacks name.    
+    parameters:
+      workflow_id:
+        type: string
     steps:
       - run:
           name: Destroy backend
@@ -197,6 +200,7 @@ jobs:
             - project/.circleci/ansible/inventory.txt
 
       - destroy-environment
+          workflow_id: "${CIRCLE_WORKFLOW_ID:0:7}"
             
 
 
