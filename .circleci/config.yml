@@ -32,7 +32,7 @@ commands:
           name: Destroy backend
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name UdaPeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
       - run:
           name: Destroy S3
           when: on_fail
@@ -43,7 +43,7 @@ commands:
           name: Destroy frontend
           when: on_fail
           command: |
-            aws cloudformation delete-stack --stack-name UdaPeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 
   revert-migrations:
     description: Revert the last migration if successfully run in the current workflow.
@@ -174,16 +174,16 @@ jobs:
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
-              --tags project="UdaPeople-backend" \
-              --stack-name "UdaPeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project="udapeople-backend" \
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"   
       - run:
           name: Ensure front-end infrastructure exist
           command: |
             aws cloudformation deploy \
               --template-file .circleci/files/frontend.yml \
-              --tags project="UdaPeople-frontend" \
-              --stack-name "UdaPeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project="udapeople-frontend" \
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}" 
       - run:
           name: Add back-end ip to ansible inventory
