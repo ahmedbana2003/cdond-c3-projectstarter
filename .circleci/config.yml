@@ -56,7 +56,7 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
             
 
-   revert-migrations:
+  revert-migrations:
     description: Revert  last migration
     parameters:
       Workflow_ID:
@@ -75,7 +75,7 @@ commands:
               npm install
               npm run migration:revert
             fi
-            
+          
 jobs:
   build-frontend:
     docker:
