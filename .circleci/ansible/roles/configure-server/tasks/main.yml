@@ -1,10 +1,10 @@
-  - name: "update packege"
-    apt:
-      update_cache: yes
+- name: "update packege"
+  apt:
+    update_cache: yes
 
-  - name: "upgrade package"
-    apt:
-      upgrade: yes
+- name: "upgrade package"
+  apt:
+    upgrade: yes
 
   
 - name: "Add Node.js from Nodesource"
