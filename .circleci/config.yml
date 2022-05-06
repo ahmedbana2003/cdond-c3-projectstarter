@@ -410,24 +410,35 @@ jobs:
 
       # Here's where you will add some code to rollback on failure  
 
-# cleanup:
-#     docker:
-#       # Docker image here
-#     steps:
-#       # Checkout code from git
-#       - run:
-#           name: Get old stack workflow id
-#           command: |
-#             # your code here
-#             export OldWorkflowID="the id here"
-#             export STACKS=[] #put the list of stacks here
-#       - run:
-#           name: Remove old stacks and files
-#           command: |
-#             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-#             then
-#               # your code here
-#             fi
+  cleanup:
+      docker:
+        - image: amazon/aws-cli
+      steps:
+        - checkout
+        - run:
+            name: Get old stack workflow id from KVDB and delete related stacks and files
+            command: |
+              
+              export OldWorkflowID=$(curl --insecure  https://kvdb.io/JZH3R9KWzGTqMLSreQwLSp/OldWorkflowID_${CIRCLE_WORKFLOW_ID:0:7})
+              echo OldWorkflowID: "${OldWorkflowID}"
+              echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
+                      
+              export STACKS=$(curl --insecure  https://kvdb.io/JZH3R9KWzGTqMLSreQwLSp/Stacks_${CIRCLE_WORKFLOW_ID:0:7})
+              echo Stacks: "${STACKS}"
+              if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
+              then
+                if [[ "${STACKS}"  != 0 ]]
+                then
+                  echo "cleanup is required"
+                  aws s3 rb "s3://udapeople-${OldWorkflowID}/" --force
+                  aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+                  aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+                else
+                  echo 'cleanup is not applicable'
+                fi
+              else  
+                echo 'cleanup is not applicable'
+              fi
             
 
 workflows:
@@ -460,5 +471,5 @@ workflows:
           requires: [deploy-backend, deploy-frontend]
       - cloudfront-update:
           requires: [smoke-test]
-      # - cleanup:
-      #     requires: [cloudfront-update]
+      - cleanup:
+          requires: [cloudfront-update]
