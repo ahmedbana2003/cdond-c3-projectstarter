@@ -397,12 +397,10 @@ jobs:
       - run:
           name: Retrieve old stack workflow ID
           command: |
-            pwd
-            echo > lastFlow.txt
             aws cloudformation list-exports \
               --query "Exports[?Name==\`workflowid\`].Value" \
               --no-paginate \
-              --output text >> lastFlow.txt
+              --output text > lastFlow.txt
             cat lastFlow.txt
       - run:
           name: Update cloudfront distribution
@@ -413,9 +411,9 @@ jobs:
             --parameter-overrides workflowid="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
       - persist_to_workspace:
-          root: ~/
+          root: .
           paths:
-            - ./lastFlow.txt
+            - lastFlow.txt
       - destroy-environment:
           Workflow_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
 
@@ -440,15 +438,19 @@ jobs:
           name: Remove old stacks and files
           command: |
             cat ~/workspace/lastFlow.txt
-            OldWorkflowID=$(cat ~/workspace/lastFlow.txt)
-            STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-            echo "${OldWorkflowID}"
-            echo "${STACKS[@]}"
-            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            export OldWorkflowID=$(cat ~/workspace/lastFlow.txt)
+            export CurrentWorkflowID=${CIRCLE_WORKFLOW_ID:0:7}
+            if [[ $OldWorkflowID == "" ]]
             then
-              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+            echo "No workflow id found"
+            else
+            if [[ "$CurrentWorkflowID" != "$OldWorkflowID" ]]
+            then
+              echo "$OldWorkflowID!=$CurrentWorkflowID => will delete old version"
               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+            fi
             fi
         
 
