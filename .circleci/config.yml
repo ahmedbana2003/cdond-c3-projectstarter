@@ -403,6 +403,7 @@ jobs:
               --query "Exports[?Name==\`workflowid\`].Value" \
               --no-paginate \
               --output text >> lastFlow.txt
+            cat lastFlow.txt
       - run:
           name: Update cloudfront distribution
           command: |
@@ -412,7 +413,7 @@ jobs:
             --parameter-overrides workflowid="${CIRCLE_WORKFLOW_ID:0:7}" \
             --tags project=udapeople
       - persist_to_workspace:
-          root: .
+          root: ~/
           paths:
             - ./lastFlow.txt
       - destroy-environment:
@@ -434,12 +435,12 @@ jobs:
             yum install -y gcc-c++ make 
             yum -y install tar gzip jq
       - attach_workspace:
-          at: .
+          at: ~/workspace/
       - run:
           name: Remove old stacks and files
           command: |
-            pwd
-            OldWorkflowID=$( cat "lastFlow.txt" )
+            cat ~/workspace/lastFlow.txt
+            OldWorkflowID=$(cat ~/workspace/lastFlow.txt)
             STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
             echo "${OldWorkflowID}"
             echo "${STACKS[@]}"
