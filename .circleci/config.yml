@@ -400,7 +400,7 @@ jobs:
             pwd
             echo > lastFlow.txt
             aws cloudformation list-exports \
-              --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --query "Exports[?Name==\`workflowid\`].Value" \
               --no-paginate \
               --output text >> lastFlow.txt
       - run:
