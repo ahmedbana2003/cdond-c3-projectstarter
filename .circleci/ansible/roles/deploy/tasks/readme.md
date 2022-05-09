@@ -1,2 +1,2 @@
 ## Deployment playbook goes here.
-test prom run 3
+test prom run 5
