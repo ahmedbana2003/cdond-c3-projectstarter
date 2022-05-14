@@ -1,1 +1,5 @@
-URL02:http://udapeople-1958144.s3-website-us-east-1.amazonaws.com
+URL01: https://github.com/ahmedbana2003/cdond-c3-projectstarter
+URL02: http://udapeople-1958144.s3-website-us-east-1.amazonaws.com
+URL03: http://d1da8adlr8dmbm.cloudfront.net
+URL04: http://54.157.249.216:3030/api/status
+URL05: http://ec2-54-174-37-77.compute-1.amazonaws.com:9090
